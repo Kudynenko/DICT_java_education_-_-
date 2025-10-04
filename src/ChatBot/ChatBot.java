@@ -8,5 +8,8 @@ public class ChatBot {
         Scanner scn = new Scanner(System.in);
         System.out.println("Hello! My name is MrBot.\n" +
                 "I was created in 2025.");
+        System.out.println("Please, remind me your name.");
+        String userName = scn.nextLine();
+        System.out.println(String.format("What a great name you have, %s!", userName));
     }
 }
