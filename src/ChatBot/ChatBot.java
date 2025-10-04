@@ -24,5 +24,19 @@ public class ChatBot {
         for (int i = 0; i < userInpMaxNumber+1; i++) {
             System.out.println(String.format("%d !",i));
         }
+        System.out.println("""
+                Which keyword in Java is used to define a class?
+                1. function
+                2. def
+                3. class
+                4. struct
+                """);
+        int userQuestAnswer = 0;
+        while (userQuestAnswer != 3) {
+            userQuestAnswer = scn.nextInt();
+            if (userQuestAnswer == 3) System.out.println("Correct");
+            else System.out.println("Wrong");
+        }
+        System.out.println("Goodbye, have a nice day!");
     }
 }
