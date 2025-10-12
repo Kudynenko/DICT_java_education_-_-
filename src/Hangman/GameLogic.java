@@ -14,9 +14,15 @@ public class GameLogic {
     public void gameAction() {
         greeting();
         System.out.println("Guess the word: ");
+        System.out.println(String.format("Guess the word: %s", hintMaker(secretWord)));
         String uInp = userInput();
         if (isCorrect(uInp)) System.out.println("You survived!");
         else System.out.println("You lost!");
+    }
+    private String hintMaker(String inp) {
+        StringBuilder hint = new StringBuilder(inp);
+        hint.replace(2,inp.length(), new String(new char[inp.length()-2]).replace("\0", "-"));
+        return hint.toString();
     }
     private Boolean isCorrect(String inp) {
         if (inp.contains(secretWord)) return Boolean.TRUE;
