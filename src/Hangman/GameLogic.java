@@ -23,14 +23,13 @@ public class GameLogic {
             System.out.print("Input a latter: ");
             String uInp = userInput();
             if (!isCorrect(uInp)) {
+                alreadyGuessedLatter.add(uInp);
                 if (secretWord.contains(uInp)) {
                     ArrayList<Integer> allIndex = allGuessedIndex(uInp);
-                    alreadyGuessedLatter.add(uInp);
                     System.out.println(hintMaker(uInp, allIndex));
                 }
                 else {
                     System.out.println("That letter doesn`t appear in the word");
-                    alreadyGuessedLatter.add(uInp);
                     userHealth--;
                 }
             }
