@@ -23,20 +23,24 @@ public class GameLogic {
             System.out.print("Input a latter: ");
             String uInp = userInput();
             if (!isCorrect(uInp)) {
-                System.out.println("That latter doesn`t appear in the word");
-                userHealth--;
-            }
-            else{
-                if (!alreadyGuessedLatter.contains(uInp)) {
+                if (secretWord.contains(uInp)) {
                     ArrayList<Integer> allIndex = allGuessedIndex(uInp);
                     alreadyGuessedLatter.add(uInp);
                     System.out.println(hintMaker(uInp, allIndex));
                 }
-                else System.out.println("No improvements");
+                else {
+                    System.out.println("That letter doesn`t appear in the word");
+                    alreadyGuessedLatter.add(uInp);
+                    userHealth--;
+                }
+            }
+            if (currentSecretWord.toString().equals(secretWord)) {
+                System.out.println(String.format("You guessed the word %s", secretWord));
+                System.out.println("You survived!");
+                break;
             }
         }
-        System.out.println("Thanks for playing!\n" +
-                "We`ll see how you did in the next stage\n");
+        if(!currentSecretWord.toString().equals(secretWord))System.out.println("You lost!");
     }
     private  ArrayList<Integer> allGuessedIndex(String inp) {
         int index = secretWord.indexOf(inp);
@@ -52,8 +56,19 @@ public class GameLogic {
         return currentSecretWord.toString();
     }
     private Boolean isCorrect(String inp) {
-        if (secretWord.contains(inp)) return Boolean.TRUE;
-        else return Boolean.FALSE;
+        if (inp.length()>1){
+            System.out.println("You should input a single latter");
+            return Boolean.FALSE;
+        }
+        if(!Character.isLowerCase(inp.charAt(0))){
+            System.out.println("Please enter a lowercase English letter");
+            return Boolean.FALSE;
+        }
+        if(alreadyGuessedLatter.contains(inp)){
+            System.out.println("You`ve already guessed this letter");
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
     }
     private String userInput() {
         System.out.print(">>> ");
