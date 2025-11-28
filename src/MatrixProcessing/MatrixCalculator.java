@@ -8,47 +8,94 @@ public class MatrixCalculator {
     public static void main(String[] args) {
         while (true) {
             printMenu();
-            int choice = scanner.nextInt();
+            int choice = readInt();
 
             switch (choice) {
-                case 6 -> {
-                    double[][] A = readMatrix();
-                    if (A.length != A[0].length) {
-                        System.out.println("The operation cannot be performed.");
-                    } else {
-                        double[][] inv = MatrixUtils.inverse(A);
-                        if (inv == null) System.out.println("This matrix doesn't have an inverse.");
-                        else printMatrix(inv);
-                    }
+                case 1 -> {
+                    MatrixUtils A = readMatrix();
+                    MatrixUtils B = readMatrix();
+                    MatrixUtils C = A.add(B);
+                    if (C == null) System.out.println("The operation cannot be performed.");
+                    else C.print();
                 }
-                case 0 -> { return; }
+                case 2 -> {
+                    MatrixUtils A = readMatrix();
+                    double k = readDouble();
+                    A.multiplyByConstant(k).print();
+                }
+                case 3 -> {
+                    MatrixUtils A = readMatrix();
+                    MatrixUtils B = readMatrix();
+                    MatrixUtils C = A.multiply(B);
+                    if (C == null) System.out.println("The operation cannot be performed.");
+                    else C.print();
+                }
+                case 4 -> {
+                    System.out.println("1. Main diagonal");
+                    System.out.println("2. Side diagonal");
+                    System.out.println("3. Vertical line");
+                    System.out.println("4. Horizontal line");
+                    int type = readInt();
+                    MatrixUtils A = readMatrix();
+                    MatrixUtils T = A.transpose(type);
+                    if (T == null) System.out.println("Invalid choice!");
+                    else T.print();
+                }
+                case 5 -> {
+                    MatrixUtils A = readMatrix();
+                    double det = A.determinant();
+                    if (Double.isNaN(det)) System.out.println("The operation cannot be performed.");
+                    else System.out.println(det);
+                }
+                case 6 -> {
+                    MatrixUtils A = readMatrix();
+                    MatrixUtils inv = A.inverse();
+                    if (inv == null) System.out.println("This matrix doesn't have an inverse.");
+                    else inv.print();
+                }
+                case 0 -> {
+                    System.out.println("Bye!");
+                    return;
+                }
                 default -> System.out.println("Invalid choice!");
             }
         }
     }
 
     private static void printMenu() {
+        System.out.println("1. Add matrices");
+        System.out.println("2. Multiply matrix by a constant");
+        System.out.println("3. Multiply matrices");
+        System.out.println("4. Transpose matrix");
+        System.out.println("5. Calculate a determinant");
         System.out.println("6. Inverse matrix");
         System.out.println("0. Exit");
         System.out.print("Your choice: ");
     }
 
-    private static double[][] readMatrix() {
-        int n = scanner.nextInt();
-        int m = scanner.nextInt();
-        double[][] matrix = new double[n][m];
+    private static MatrixUtils readMatrix() {
+        int n = readInt();
+        int m = readInt();
+        double[][] data = new double[n][m];
         for (int i = 0; i < n; i++)
             for (int j = 0; j < m; j++)
-                matrix[i][j] = scanner.nextDouble();
-        return matrix;
+                data[i][j] = readDouble();
+        return new MatrixUtils(data);
     }
 
-    private static void printMatrix(double[][] matrix) {
-        for (double[] row : matrix) {
-            for (double val : row) {
-                System.out.printf("%.2f ", val);
-            }
-            System.out.println();
+    private static int readInt() {
+        while (!scanner.hasNextInt()) {
+            System.out.print("Please enter an integer: ");
+            scanner.next();
         }
+        return scanner.nextInt();
+    }
+
+    private static double readDouble() {
+        while (!scanner.hasNextDouble()) {
+            System.out.print("Please enter a number: ");
+            scanner.next();
+        }
+        return scanner.nextDouble();
     }
 }

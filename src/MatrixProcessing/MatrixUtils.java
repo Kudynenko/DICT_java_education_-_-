@@ -1,57 +1,129 @@
 package MatrixProcessing;
 
 public class MatrixUtils {
-    public static double[][] inverse(double[][] A) {
-        int n = A.length;
-        if (n != A[0].length) return null;
+    private final int rows;
+    private final int cols;
+    private final double[][] data;
 
-        double det = determinant(A);
-        if (det == 0) return null;
-
-        double[][] adj = adjoint(A);
-        double[][] inv = new double[n][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                inv[i][j] = adj[i][j] / det;
-        return inv;
+    public MatrixUtils(double[][] data) {
+        if (data == null || data.length == 0 || data[0].length == 0)
+            throw new IllegalArgumentException("Invalid data");
+        this.rows = data.length;
+        this.cols = data[0].length;
+        this.data = new double[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            if (data[i].length != cols) throw new IllegalArgumentException("Jagged array");
+            this.data[i] = data[i].clone();
+        }
     }
 
-    public static double determinant(double[][] A) {
-        int n = A.length;
-        if (n == 1) return A[0][0];
-        if (n == 2) return A[0][0] * A[1][1] - A[0][1] * A[1][0];
+    public MatrixUtils add(MatrixUtils other) {
+        if (other == null || rows != other.rows || cols != other.cols) return null;
+        double[][] result = new double[rows][cols];
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                result[i][j] = this.data[i][j] + other.data[i][j];
+        return new MatrixUtils(result);
+    }
 
-        double det = 0;
-        for (int col = 0; col < n; col++) {
-            det += Math.pow(-1, col) * A[0][col] * determinant(minor(A, 0, col));
+    public MatrixUtils multiplyByConstant(double k) {
+        double[][] result = new double[rows][cols];
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                result[i][j] = this.data[i][j] * k;
+        return new MatrixUtils(result);
+    }
+
+    public MatrixUtils multiply(MatrixUtils other) {
+        if (other == null || this.cols != other.rows) return null;
+        double[][] result = new double[this.rows][other.cols];
+        for (int i = 0; i < this.rows; i++)
+            for (int j = 0; j < other.cols; j++)
+                for (int k = 0; k < this.cols; k++)
+                    result[i][j] += this.data[i][k] * other.data[k][j];
+        return new MatrixUtils(result);
+    }
+
+    public MatrixUtils transpose(int type) {
+        double[][] result;
+        switch (type) {
+            case 1 -> {
+                result = new double[cols][rows];
+                for (int i = 0; i < rows; i++)
+                    for (int j = 0; j < cols; j++)
+                        result[j][i] = data[i][j];
+            }
+            case 2 -> {
+                result = new double[cols][rows];
+                for (int i = 0; i < rows; i++)
+                    for (int j = 0; j < cols; j++)
+                        result[cols - 1 - j][rows - 1 - i] = data[i][j];
+            }
+            case 3 -> {
+                result = new double[rows][cols];
+                for (int i = 0; i < rows; i++)
+                    for (int j = 0; j < cols; j++)
+                        result[i][cols - 1 - j] = data[i][j];
+            }
+            case 4 -> {
+                result = new double[rows][cols];
+                for (int i = 0; i < rows; i++)
+                    for (int j = 0; j < cols; j++)
+                        result[rows - 1 - i][j] = data[i][j];
+            }
+            default -> { return null; }
         }
+        return new MatrixUtils(result);
+    }
+
+    public double determinant() {
+        if (rows != cols) return Double.NaN;
+        if (rows == 1) return data[0][0];
+        if (rows == 2) return data[0][0] * data[1][1] - data[0][1] * data[1][0];
+        double det = 0;
+        for (int col = 0; col < cols; col++)
+            det += Math.pow(-1, col) * data[0][col] * minor(0, col).determinant();
         return det;
     }
 
-    private static double[][] minor(double[][] A, int row, int col) {
-        int n = A.length;
-        double[][] result = new double[n - 1][n - 1];
+    private MatrixUtils minor(int row, int col) {
+        double[][] result = new double[rows - 1][cols - 1];
         int r = 0;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < rows; i++) {
             if (i == row) continue;
             int c = 0;
-            for (int j = 0; j < n; j++) {
+            for (int j = 0; j < cols; j++) {
                 if (j == col) continue;
-                result[r][c++] = A[i][j];
+                result[r][c++] = data[i][j];
             }
             r++;
         }
-        return result;
+        return new MatrixUtils(result);
     }
 
-    private static double[][] adjoint(double[][] A) {
-        int n = A.length;
-        double[][] adj = new double[n][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++) {
+    public MatrixUtils inverse() {
+        if (rows != cols) return null;
+        double det = determinant();
+        if (det == 0) return null;
+        double[][] adj = new double[rows][cols];
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++) {
                 double sign = ((i + j) % 2 == 0) ? 1 : -1;
-                adj[j][i] = sign * determinant(minor(A, i, j));
+                adj[j][i] = sign * minor(i, j).determinant();
             }
-        return adj;
+        double[][] inv = new double[rows][cols];
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                inv[i][j] = adj[i][j] / det;
+        return new MatrixUtils(inv);
+    }
+
+    public void print() {
+        for (double[] row : data) {
+            for (double val : row) {
+                System.out.printf("%.2f ", val);
+            }
+            System.out.println();
+        }
     }
 }
