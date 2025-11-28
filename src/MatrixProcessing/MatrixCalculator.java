@@ -11,13 +11,14 @@ public class MatrixCalculator {
             int choice = scanner.nextInt();
 
             switch (choice) {
-                case 5 -> {
+                case 6 -> {
                     double[][] A = readMatrix();
                     if (A.length != A[0].length) {
                         System.out.println("The operation cannot be performed.");
                     } else {
-                        double det = MatrixUtils.determinant(A);
-                        System.out.println(det);
+                        double[][] inv = MatrixUtils.inverse(A);
+                        if (inv == null) System.out.println("This matrix doesn't have an inverse.");
+                        else printMatrix(inv);
                     }
                 }
                 case 0 -> { return; }
@@ -27,7 +28,7 @@ public class MatrixCalculator {
     }
 
     private static void printMenu() {
-        System.out.println("5. Calculate a determinant");
+        System.out.println("6. Inverse matrix");
         System.out.println("0. Exit");
         System.out.print("Your choice: ");
     }
@@ -40,5 +41,14 @@ public class MatrixCalculator {
             for (int j = 0; j < m; j++)
                 matrix[i][j] = scanner.nextDouble();
         return matrix;
+    }
+
+    private static void printMatrix(double[][] matrix) {
+        for (double[] row : matrix) {
+            for (double val : row) {
+                System.out.printf("%.2f ", val);
+            }
+            System.out.println();
+        }
     }
 }

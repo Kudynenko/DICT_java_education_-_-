@@ -1,10 +1,23 @@
 package MatrixProcessing;
 
 public class MatrixUtils {
+    public static double[][] inverse(double[][] A) {
+        int n = A.length;
+        if (n != A[0].length) return null;
+
+        double det = determinant(A);
+        if (det == 0) return null;
+
+        double[][] adj = adjoint(A);
+        double[][] inv = new double[n][n];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                inv[i][j] = adj[i][j] / det;
+        return inv;
+    }
+
     public static double determinant(double[][] A) {
         int n = A.length;
-        if (n != A[0].length) return Double.NaN;
-
         if (n == 1) return A[0][0];
         if (n == 2) return A[0][0] * A[1][1] - A[0][1] * A[1][0];
 
@@ -15,7 +28,6 @@ public class MatrixUtils {
         return det;
     }
 
-    // Допоміжний метод для мінору
     private static double[][] minor(double[][] A, int row, int col) {
         int n = A.length;
         double[][] result = new double[n - 1][n - 1];
@@ -30,5 +42,16 @@ public class MatrixUtils {
             r++;
         }
         return result;
+    }
+
+    private static double[][] adjoint(double[][] A) {
+        int n = A.length;
+        double[][] adj = new double[n][n];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++) {
+                double sign = ((i + j) % 2 == 0) ? 1 : -1;
+                adj[j][i] = sign * determinant(minor(A, i, j));
+            }
+        return adj;
     }
 }
