@@ -11,11 +11,12 @@ public class MatrixCalculator {
             int choice = scanner.nextInt();
 
             switch (choice) {
-                case 2 -> {
+                case 3 -> {
                     double[][] A = readMatrix();
-                    double k = scanner.nextDouble();
-                    double[][] C = MatrixUtils.multiplyByConstant(A, k);
-                    printMatrix(C);
+                    double[][] B = readMatrix();
+                    double[][] C = MatrixUtils.multiply(A, B);
+                    if (C == null) System.out.println("The operation cannot be performed.");
+                    else printMatrix(C);
                 }
                 case 0 -> { return; }
                 default -> System.out.println("Invalid choice!");
@@ -24,7 +25,7 @@ public class MatrixCalculator {
     }
 
     private static void printMenu() {
-        System.out.println("2. Multiply matrix by a constant");
+        System.out.println("3. Multiply matrices");
         System.out.println("0. Exit");
         System.out.print("Your choice: ");
     }
