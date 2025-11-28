@@ -11,21 +11,25 @@ public class MatrixCalculator {
             int choice = scanner.nextInt();
 
             switch (choice) {
-                case 3 -> {
+                case 4 -> { // транспонування
+                    System.out.println("1. Main diagonal");
+                    System.out.println("2. Side diagonal");
+                    System.out.println("3. Vertical line");
+                    System.out.println("4. Horizontal line");
+                    int type = scanner.nextInt();
                     double[][] A = readMatrix();
-                    double[][] B = readMatrix();
-                    double[][] C = MatrixUtils.multiply(A, B);
-                    if (C == null) System.out.println("The operation cannot be performed.");
-                    else printMatrix(C);
+                    double[][] T = MatrixUtils.transpose(A, type);
+                    if (T == null) System.out.println("Invalid choice!");
+                    else printMatrix(T);
                 }
-                case 0 -> { return; }
+                case 0 -> { return; } // вихід
                 default -> System.out.println("Invalid choice!");
             }
         }
     }
 
     private static void printMenu() {
-        System.out.println("3. Multiply matrices");
+        System.out.println("4. Transpose matrix");
         System.out.println("0. Exit");
         System.out.print("Your choice: ");
     }

@@ -1,20 +1,37 @@
 package MatrixProcessing;
 
 public class MatrixUtils {
-    public static double[][] multiply(double[][] A, double[][] B) {
-        int n1 = A.length, m1 = A[0].length;
-        int n2 = B.length, m2 = B[0].length;
+    public static double[][] transpose(double[][] A, int type) {
+        int n = A.length, m = A[0].length;
+        double[][] result;
 
-        if (m1 != n2) return null;
-
-        double[][] C = new double[n1][m2];
-        for (int i = 0; i < n1; i++) {
-            for (int j = 0; j < m2; j++) {
-                for (int k = 0; k < m1; k++) {
-                    C[i][j] += A[i][k] * B[k][j];
-                }
+        switch (type) {
+            case 1 -> {
+                result = new double[m][n];
+                for (int i = 0; i < n; i++)
+                    for (int j = 0; j < m; j++)
+                        result[j][i] = A[i][j];
             }
+            case 2 -> {
+                result = new double[m][n];
+                for (int i = 0; i < n; i++)
+                    for (int j = 0; j < m; j++)
+                        result[m - 1 - j][n - 1 - i] = A[i][j];
+            }
+            case 3 -> {
+                result = new double[n][m];
+                for (int i = 0; i < n; i++)
+                    for (int j = 0; j < m; j++)
+                        result[i][m - 1 - j] = A[i][j];
+            }
+            case 4 -> {
+                result = new double[n][m];
+                for (int i = 0; i < n; i++)
+                    for (int j = 0; j < m; j++)
+                        result[n - 1 - i][j] = A[i][j];
+            }
+            default -> result = null;
         }
-        return C;
+        return result;
     }
 }
